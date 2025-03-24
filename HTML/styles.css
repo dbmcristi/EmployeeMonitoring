@@ -1,0 +1,62 @@
+/* Reset și stiluri generale */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+header {
+    background: linear-gradient(to right, #4CAF50, #2E8B57);
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+/* Meniu de navigare */
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    transition: color 0.3s ease-in-out;
+}
+
+nav ul li a:hover {
+    color: yellow;
+}
+
+/* Conținut principal */
+main {
+    flex: 1;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Footer fixat și centrat */
+footer {
+    background: #2E8B57;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+    margin-top: auto; /* Împinge footer-ul în jos */
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <h1>Login</h1>
+</header>
+<main>
+  <form action="dashboard.html" method="post">
+    <label for="username">Nume utilizator:</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">Parolă:</label>
+    <input type="password" id="password" name="password" required>
+
+          <legend>Selectați tipul de utilizator:</legend>
+      <input type="radio" id="manager" name="user-type" value="manager" required>
+      <label for="manager">Manager</label>
+
+      <input type="radio" id="angajat" name="user-type" value="angajat" required>
+      <label for="angajat">Angajat</label>
+
+
+    <button type="submit">Autentificare</button>
+  </form>
+  <footer>
+    <p>&copy; 2025 Monitorizare Angajați. Toate drepturile rezervate.</p>
+  </footer>
+</main>
+</body>
+</html>
