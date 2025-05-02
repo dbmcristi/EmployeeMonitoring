@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: employeeManagement_DB
+    environment:
+      POSTGRES_DB: employeeManagement
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin_password
+    networks:
+      - backend
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    ports:
+      - '5434:5432'  # PostgreSQL will be available on localhost:5434
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"  # pgAdmin will be available on localhost:8888
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    networks:
+      - backend
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  postgres_db:
+  pgadmin-data:
+
+networks:
+  backend:
+    driver: bridge
