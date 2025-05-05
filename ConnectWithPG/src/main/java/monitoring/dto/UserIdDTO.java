@@ -3,7 +3,8 @@ package monitoring.dto;
 import lombok.Data;
 
 @Data
-public class UserDTO {
+public class UserIdDTO {
+    public Long userId;
     public String username;
     public String password;
 }

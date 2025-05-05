@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/manager")
+@CrossOrigin(origins = "*")
 public class ManagerController {
 
     private final ServiceImpl service;

@@ -1,8 +1,6 @@
 package monitoring.service;
 
-import monitoring.dto.EmployeeDTO;
-import monitoring.dto.ManagerDTO;
-import monitoring.dto.UserDTO;
+import monitoring.dto.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +19,10 @@ public interface MyService {
 
     ManagerDTO saveManager(ManagerDTO managerDTO);
 
+    TaskDTO saveTask(TaskDTO taskDTO);
+
+    List<TaskDTO> findTaskByEmployeeId(Long employeeId);
+
     EmployeeDTO updateEmployee(Long id, EmployeeDTO employeeDTO);
 
     ManagerDTO updateManager(Long id, ManagerDTO managerDTO);
@@ -30,4 +32,12 @@ public interface MyService {
     void deleteManager(Long id);
 
     UserDTO login(UserDTO userDTO, String role);
+
+    List<TaskDTO> getAllTasks();
+
+    TimetableDTO saveTimetable(TimetableDTO timetableDTO);
+
+    TimetableDTO findTimetableByEmployeeId(Long employeeId);
+
+    TimetableDTO logout(Long idEmployee);
 }

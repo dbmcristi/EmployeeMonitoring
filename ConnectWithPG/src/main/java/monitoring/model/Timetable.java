@@ -1,18 +1,25 @@
 package monitoring.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.sql.Timestamp;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Timetable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String loginTime;
-    String logoutTime;
+    private Long id;
+    private Timestamp beginTime;
+    private Timestamp endTime;
+
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id")
-    Long employeeId;
+    @JoinColumn(name = "employee_id", referencedColumnName = "id")
+    private Employee employee;
 
 }

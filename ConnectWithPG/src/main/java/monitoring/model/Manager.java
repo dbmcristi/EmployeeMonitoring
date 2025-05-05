@@ -1,11 +1,17 @@
 package monitoring.model;
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
-public class Manager extends User{
+public class Manager extends User {
+
+    @OneToMany(mappedBy = "manager")
+    Set<Task> tasks;
 
     @Override
     public String toString() {
