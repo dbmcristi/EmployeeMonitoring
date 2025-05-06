@@ -60,5 +60,8 @@ public interface MyMapper {
         return value == null ? null : Timestamp.valueOf(value);
     }
 
+    @Mapping(source = "manager.username", target = "manager")
+    TaskNameManagerDTO toManagerDto(Task source);
 
+    List<TaskNameManagerDTO> toManagerDto(List<Task> source);
 }

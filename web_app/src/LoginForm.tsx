@@ -28,7 +28,7 @@ const LoginForm: React.FC = () => {
             } else if (userType === 'angajat') {
                 endpoint = 'http://localhost:8080/login/employee';
             } else {
-                throw new Error('Trebuie selectat un tip de utilizator');
+                throw new Error('Wrong user type');
             }
 
             const response = await fetch(endpoint, {
@@ -38,77 +38,173 @@ const LoginForm: React.FC = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Autentificare eșuată');
+                throw new Error('Wrong username or password');
             }
 
             const data = await response.json();
             console.log('Login success:', data);
-            if (userType!== 'manager') {
+            if (userType !== 'manager') {
                 localStorage.setItem('employeeId', data.id);
-
-             }
-
-            setSuccess(true);
-
-// After login success
-            if (userType === 'manager') {
-                navigate('/manager');
             } else {
-                navigate('/employee');
+                localStorage.setItem('managerId', data.id);
+            }
+            setSuccess(true);
+            if (userType === 'manager') {
+                navigate(`/manager?managerId=${data.id}`);
+            } else {
+                navigate(`/employee?employeeId=${data.id}`);
             }
         } catch (err: any) {
-            setError(err.message || 'A apărut o eroare');
+            setError(err.message || 'Error');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-green-100 px-4 py-8">
-            <main className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 border border-gray-200">
-                <header className="mb-6 text-center">
-                    <h1 className="text-3xl font-bold text-gray-800">Autentificare</h1>
-                    <p className="text-sm text-gray-500 mt-1">Intră în contul tău pentru a continua</p>
+        <div
+            className="login-container"
+        >
+            <style>
+                {`
+                body {
+                    margin: 0;
+                    font-family: Arial, sans-serif;
+                    background: linear-gradient(to bottom right, #cce6ff, #ccffcc);
+                }
+                .login-container {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                }
+                .login-card {
+                    background: white;
+                    padding: 40px;
+                    border-radius: 20px;
+                    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+                    width: 100%;
+                    max-width: 400px;
+                }
+                .login-header {
+                    text-align: center;
+                    margin-bottom: 20px;
+                }
+                .login-header h1 {
+                    margin: 0;
+                    font-size: 28px;
+                    color: #333;
+                }
+                .login-header p {
+                    color: #777;
+                    font-size: 14px;
+                }
+                .login-form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 15px;
+                }
+                .login-form label {
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    color: #555;
+                }
+                .login-form input[type="text"],
+                .login-form input[type="password"] {
+                    padding: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 10px;
+                    transition: border-color 0.3s;
+                }
+                .login-form input:focus {
+                    border-color: #3399ff;
+                    outline: none;
+                }
+                .login-form fieldset {
+                    border: none;
+                    margin: 0;
+                    padding: 0;
+                }
+                .login-form legend {
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                }
+                .login-form .user-types {
+                    display: flex;
+                    gap: 15px;
+                }
+                .login-form button {
+                    padding: 12px;
+                    background: linear-gradient(to right, #3399ff, #3366ff);
+                    color: white;
+                    font-weight: bold;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    transition: background 0.3s;
+                }
+                .login-form button:hover {
+                    background: linear-gradient(to right, #3366ff, #3333ff);
+                }
+                .login-form button:disabled {
+                    background: #999;
+                    cursor: not-allowed;
+                }
+                .message {
+                    text-align: center;
+                    font-size: 14px;
+                }
+                .message.error {
+                    color: red;
+                }
+                .message.success {
+                    color: green;
+                }
+                .footer {
+                    text-align: center;
+                    margin-top: 20px;
+                    font-size: 12px;
+                    color: #aaa;
+                }
+                `}
+            </style>
+
+            <main className="login-card">
+                <header className="login-header">
+                    <h1>Authentificate</h1>
+                    <p>Login to continue</p>
                 </header>
 
-                <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-                    {/* Username */}
+                <form onSubmit={handleSubmit} className="login-form">
                     <div>
-                        <label htmlFor="username" className="block mb-1 font-semibold text-gray-700">
-                            Nume utilizator
-                        </label>
+                        <label htmlFor="username">User name</label>
                         <input
                             type="text"
                             id="username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
                             placeholder="nume.exemplu"
                         />
                     </div>
 
-                    {/* Password */}
                     <div>
-                        <label htmlFor="password" className="block mb-1 font-semibold text-gray-700">
-                            Parolă
-                        </label>
+                        <label htmlFor="password">Password</label>
                         <input
                             type="password"
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
-                            className="w-full px-4 py-2.5 border border-gray-300 rounded-xl shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
                             placeholder="••••••••"
                         />
                     </div>
 
-                    {/* User type */}
-                    <fieldset className="border-t pt-4">
-                        <legend className="text-md font-semibold text-gray-700 mb-2">Tip de utilizator</legend>
-                        <div className="flex items-center gap-4">
-                            <label className="flex items-center gap-2 text-gray-700">
+                    <fieldset>
+                        <div className="login-form">
+                            <legend >User type:</legend>
+
+                            <label>
                                 <input
                                     type="radio"
                                     name="user-type"
@@ -116,11 +212,9 @@ const LoginForm: React.FC = () => {
                                     checked={userType === 'manager'}
                                     onChange={() => setUserType('manager')}
                                     required
-                                    className="accent-blue-600"
-                                />
-                                Manager
+                                /> Manager
                             </label>
-                            <label className="flex items-center gap-2 text-gray-700">
+                            <label>
                                 <input
                                     type="radio"
                                     name="user-type"
@@ -128,29 +222,21 @@ const LoginForm: React.FC = () => {
                                     checked={userType === 'angajat'}
                                     onChange={() => setUserType('angajat')}
                                     required
-                                    className="accent-green-600"
-                                />
-                                Angajat
+                                /> Employee
                             </label>
                         </div>
                     </fieldset>
 
-                    {/* Submit */}
-                    <button
-                        type="submit"
-                        className="w-full mt-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl hover:from-blue-600 hover:to-blue-700 shadow-md transition duration-200 disabled:opacity-50"
-                        disabled={loading}
-                    >
-                        {loading ? 'Se autentifică...' : 'Autentificare'}
+                    <button type="submit" disabled={loading}>
+                        {loading ? 'Loading...' : 'Authentification'}
                     </button>
 
-                    {/* Messages */}
-                    {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
-                    {success && <p className="text-green-600 text-sm mt-2">Autentificare reușită!</p>}
+                    {error && <p className="message error">{error}</p>}
+                    {success && <p className="message success">Success</p>}
                 </form>
 
-                <footer className="mt-6 text-center text-xs text-gray-400">
-                    &copy; 2025 Monitorizare Angajați. Toate drepturile rezervate.
+                <footer className="footer">
+                    &copy; 2025 Employee Monitoring.
                 </footer>
             </main>
         </div>

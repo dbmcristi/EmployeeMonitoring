@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -102,9 +103,9 @@ public class ServiceImpl implements MyService {
     }
 
     @Override
-    public List<TaskDTO> findTaskByEmployeeId(Long employeeId) {
+    public List<TaskNameManagerDTO> findTaskByEmployeeIdList(Long employeeId) {
         List<Task> saved = taskRepo.findByEmployeeId(employeeId);
-        return myMapper.toDto(saved);
+        return myMapper.toManagerDto(saved);
     }
 
     @Override
@@ -154,16 +155,15 @@ public class ServiceImpl implements MyService {
 /// make them null
             if (employee != null) {
                 Long idEmployee = employee.getId();
-                LocalDateTime currentDateTime = LocalDateTime.now();
                 if (timetable == null) {
                     TimetableDTO timetableDTO = TimetableDTO.builder()
                             .employeeId(idEmployee)
-                            .beginTime(currentDateTime.format(FORMATTER))
+                            .beginTime(null)
                             .endTime(null)
                             .build();
                     saveTimetable(timetableDTO);
                 } else {
-                    timetable.setBeginTime(Timestamp.valueOf(currentDateTime.format(FORMATTER)));
+                    timetable.setBeginTime(null);
                     timetable.setEndTime(null);
                     saveTimetable(myMapper.toDto(timetable));
                 }
@@ -175,9 +175,9 @@ public class ServiceImpl implements MyService {
 
     @Override
     public TimetableDTO logout(Long idEmployee) {
+        //se va pune end timeul
         Timetable timetable = timetableRepo.findByEmployeeId(idEmployee);
         LocalDateTime currentDateTime = LocalDateTime.now();
-
         if (timetable != null) {
             try {
                 Date parsedDate = dateFormat.parse(timetable.getBeginTime().toString());
@@ -196,20 +196,52 @@ public class ServiceImpl implements MyService {
         return null;
     }
 
-    public TimetableDTO updateStartHour(Long employeeId, String hour) {
+    @Override
+    public List<TimetableEmployeeDTO> getAllEmployeesPresent() {
+        var employees = employeeRepo.findAll();
+        var timetables = timetableRepo.findByEndTimeIsNullAndBeginTimeIsNotNull();
+        System.out.println("timeTables: ");
+    timetables.forEach(timetable -> System.out.println(timetable));
+        var timetableMap = timetables.stream()
+                .collect(Collectors.toMap(
+                        timetable -> timetable.getEmployee().getId(), Timetable::getBeginTime));
+        return employees.stream()
+                .filter(employee -> timetableMap.containsKey(employee.getId()))
+                .map(employee ->
+                TimetableEmployeeDTO.builder()
+                        .employeeId(employee.getId())
+                        .username(employee.getUsername())
+                        .beginTime(convert(timetableMap.get(employee.getId())))
+                        .build()).collect(Collectors.toList());
+    }
+
+    public TimetableDTO updateStartHour(Long employeeId, int hour, int minutes, int seconds) {
         Timetable timetable = timetableRepo.findByEmployeeId(employeeId);
+        //cautam si facem save
         if (timetable != null) {
-            try {
-                Date parsedDate = dateFormat.parse(timetable.getBeginTime().toString());
-                TimetableDTO timetableDTO = TimetableDTO.builder()
-                        .id(timetable.getId())
-                        .employeeId(idEmployee)
-                        .beginTime(dateFormat.format(parsedDate))
-                        .endTime(currentDateTime.format(FORMATTER))
-                        .build();
-                return saveTimetable(timetableDTO);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
+            LocalDateTime current = LocalDateTime.now();
+            LocalDateTime currentDateTime = LocalDateTime.of(current.getYear(), current.getMonth(), current.getDayOfMonth(), hour, minutes, seconds);
+            TimetableDTO timetableDTO = TimetableDTO.builder()
+                    .id(timetable.getId())
+                    .employeeId(employeeId)
+                    .beginTime(currentDateTime.format(FORMATTER))
+                    .endTime(null)
+                    .build();
+            return saveTimetable(timetableDTO);
+        }
+        return null;
+
+    }
+
+    private String convert(Timestamp timestamp) {
+        if (timestamp == null) {
+            return null;
+        }
+        try {
+            Date parsedDate = dateFormat.parse(timestamp.toString());
+            return dateFormat.format(parsedDate);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

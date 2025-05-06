@@ -9,5 +9,7 @@ public interface TaskRepo extends JpaRepository<Task, Long> {
 
  List<Task> findByEmployeeId(Long employeeId);
 
+
  Task findByManagerId(Long managerId);
+
 }

@@ -1,5 +1,6 @@
 package monitoring.controller;
 
+import monitoring.dto.HourDTO;
 import monitoring.dto.TimetableDTO;
 import monitoring.service.ServiceImpl;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,8 @@ public class TimetableController {
 //        return service.saveTimetable(TimetableDTO);
 //    }
     @PatchMapping("/{employeeId}")
-    public TimetableDTO updateStartDate(@PathVariable Long employeeId,@RequestBody String hour) {
-        return service.updateStartHour(employeeId,hour);
+    public TimetableDTO updateStartDate(@PathVariable Long employeeId,@RequestBody HourDTO myHour) {
+        //se pune begin date ul cand apasa butonul
+        return service.updateStartHour(employeeId, myHour.getHour(), myHour.getMinutes(), myHour.getSeconds());
     }
 }

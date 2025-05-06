@@ -1,6 +1,7 @@
 package monitoring.controller;
 
 import monitoring.dto.TaskDTO;
+import monitoring.dto.TaskNameManagerDTO;
 import monitoring.service.ServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +25,8 @@ public class TaskController {
 
 
     @GetMapping("/{id}")
-    public List<TaskDTO> getTaskByEmployeeId(@PathVariable Long id) {
-        return service.findTaskByEmployeeId(id);
+    public List<TaskNameManagerDTO> getTaskByEmployeeId(@PathVariable Long id) {
+        return service.findTaskByEmployeeIdList(id);
     }
 
     @PostMapping("")

@@ -3,6 +3,7 @@ package monitoring.controller;
 
 import monitoring.dto.EmployeeDTO;
 import monitoring.dto.ManagerDTO;
+import monitoring.dto.TimetableEmployeeDTO;
 import monitoring.service.ServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,10 @@ public class EmployeeController {
         return service.getAllEmployees();
     }
 
+    @GetMapping("/all/present")
+    public List<TimetableEmployeeDTO> getAllEmployeesPresent() {
+        return service.getAllEmployeesPresent();
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id) {

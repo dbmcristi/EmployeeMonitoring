@@ -21,8 +21,6 @@ public interface MyService {
 
     TaskDTO saveTask(TaskDTO taskDTO);
 
-    List<TaskDTO> findTaskByEmployeeId(Long employeeId);
-
     EmployeeDTO updateEmployee(Long id, EmployeeDTO employeeDTO);
 
     ManagerDTO updateManager(Long id, ManagerDTO managerDTO);
@@ -39,5 +37,9 @@ public interface MyService {
 
     TimetableDTO findTimetableByEmployeeId(Long employeeId);
 
+    List<TaskNameManagerDTO> findTaskByEmployeeIdList(Long employeeId);
+
     TimetableDTO logout(Long idEmployee);
+
+    List<TimetableEmployeeDTO> getAllEmployeesPresent();
 }
