@@ -18,7 +18,8 @@ const ManagerPage: React.FC = () => {
     const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
     const [submitError, setSubmitError] = useState<string | null>(null);
 
-    useEffect(() => {
+    const fetchEmployees = () => {
+        setLoading(true); // important to trigger the loading state each time
         fetch('http://localhost:8080/employee/all/present')
             .then((response) => {
                 if (!response.ok) throw new Error('Error loading employee');
@@ -32,6 +33,14 @@ const ManagerPage: React.FC = () => {
                 setError(err.message);
                 setLoading(false);
             });
+    };
+
+    useEffect(() => {
+        fetchEmployees();
+
+        // Optional: Polling every 30 seconds
+        // const interval = setInterval(fetchEmployees, 30000);
+        // return () => clearInterval(interval);
     }, []);
 
     const handleSubmit = async () => {
@@ -85,49 +94,49 @@ const ManagerPage: React.FC = () => {
             {loading && <p style={{ textAlign: 'center' }}>Se încarcă angajații...</p>}
             {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
 
-            {!loading && !error && (
-                <div>
-                    <label style={{ display: 'block', marginBottom: '10px' }}>
-                        Select an employee:
-                        <select
-                            value={selectedEmployeeId ?? ''}
-                            onChange={(e) => setSelectedEmployeeId(Number(e.target.value))}
-                            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-                        >
-                            <option value="">-- Choose an employee --</option>
-                            {employees.map((emp) => (
-                                <option key={emp.employeeId} value={emp.employeeId}>
-                                    {emp.username} (ID: {emp.employeeId}) - beginning: {emp.beginTime}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-
-                    <label style={{ display: 'block', marginBottom: '10px' }}>
-                        Task description:
-                        <textarea
-                            value={taskDescription}
-                            onChange={(e) => setTaskDescription(e.target.value)}
-                            placeholder="Description..."
-                            rows={4}
-                            style={{ width: '100%', padding: '8px', marginTop: '5px' }}
-                        />
-                    </label>
-
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isSubmitting}
-                        style={{ padding: '10px 20px', width: '100%', backgroundColor: '#4CAF50', color: 'white' }}
+            <div>
+                <label style={{ display: 'block', marginBottom: '10px' }}>
+                    Select an employee:
+                    <select
+                        value={selectedEmployeeId ?? ''}
+                        onChange={(e) => setSelectedEmployeeId(Number(e.target.value))}
+                        onFocus={fetchEmployees} // Refresh list on dropdown focus
+                        style={{ width: '100%', padding: '8px', marginTop: '5px' }}
                     >
-                        {isSubmitting ? 'Loading' : 'Send task'}
-                    </button>
+                        <option value="">-- Choose an employee --</option>
+                        {employees.map((emp) => (
+                            <option key={emp.employeeId} value={emp.employeeId}>
+                                {emp.username} (ID: {emp.employeeId}) - beginning: {emp.beginTime}
+                            </option>
+                        ))}
+                    </select>
+                </label>
 
-                    {submitError && <p style={{ color: 'red', marginTop: '10px' }}>{submitError}</p>}
-                    {submitSuccess && <p style={{ color: 'green', marginTop: '10px' }}>{submitSuccess}</p>}
-                </div>
-            )}
+                <label style={{ display: 'block', marginBottom: '10px' }}>
+                    Task description:
+                    <textarea
+                        value={taskDescription}
+                        onChange={(e) => setTaskDescription(e.target.value)}
+                        placeholder="Description..."
+                        rows={4}
+                        style={{ width: '100%', padding: '8px', marginTop: '5px' }}
+                    />
+                </label>
+
+                <button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    style={{ padding: '10px 20px', width: '100%', backgroundColor: '#4CAF50', color: 'white' }}
+                >
+                    {isSubmitting ? 'Loading' : 'Send task'}
+                </button>
+
+                {submitError && <p style={{ color: 'red', marginTop: '10px' }}>{submitError}</p>}
+                {submitSuccess && <p style={{ color: 'green', marginTop: '10px' }}>{submitSuccess}</p>}
+            </div>
         </div>
     );
+
 };
 
 export default ManagerPage;

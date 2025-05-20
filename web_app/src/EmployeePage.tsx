@@ -66,13 +66,25 @@ const EmployeePage: React.FC = () => {
     useEffect(() => {
         if (!employeeIdNum) return;
 
-        fetch(`http://localhost:8080/task/${employeeIdNum}`)
-            .then((res) => {
-                if (!res.ok) throw new Error('Failed to fetch tasks');
-                return res.json();
-            })
-            .then((data: Task[]) => setTasks(data))
-            .catch((err) => console.error('Error loading tasks:', err));
+        const fetchTasks = () => {
+            fetch(`http://localhost:8080/task/${employeeIdNum}`)
+                .then((res) => {
+                    if (!res.ok) throw new Error('Failed to fetch tasks');
+                    return res.json();
+                })
+                .then((data: Task[]) => setTasks(data))
+                .catch((err) => console.error('Error loading tasks:', err));
+        };
+
+        // Initial fetch
+        fetchTasks();
+
+        // Set interval for polling every 1 second
+        const intervalId = setInterval(fetchTasks, 1000);
+
+        // Clear interval on component unmount
+        return () => clearInterval(intervalId);
+
     }, [employeeIdNum]);
 
     return (
